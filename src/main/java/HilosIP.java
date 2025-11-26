@@ -9,7 +9,9 @@ public class HilosIP {
     }
 
     public static void mostrarPuertosArriba(String ip) {
+
         Socket socket = new Socket();
+
     }
 
 }
