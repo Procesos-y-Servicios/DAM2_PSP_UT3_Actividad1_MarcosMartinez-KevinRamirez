@@ -1,14 +1,16 @@
 import javax.net.ssl.HostnameVerifier;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EjecutorPing extends Thread{
 
-    private static String host;
+    private String host;
 
-    private ArrayList<String> listaHostsArriba = new ArrayList<>();
+    private List<String> listaHostsArriba;
 
-    public EjecutorPing(String host, ArrayList<String> lista) {
+    public EjecutorPing(String host, List<String> lista) {
         this.host = host;
         this.listaHostsArriba = lista;
     }
@@ -16,7 +18,7 @@ public class EjecutorPing extends Thread{
     @Override
     public void run() {
         ProcessBuilder pb;
-        if (System.getProperty("os.name").toLowerCase().equals("win")){
+        if (System.getProperty("os.name").toLowerCase().contains("win")){
             pb = new ProcessBuilder("ping","-n", "1" , host);
         } else {
             pb = new ProcessBuilder("ping","-c", "1" , host);
@@ -27,6 +29,7 @@ public class EjecutorPing extends Thread{
             process.waitFor();
             if (process.exitValue() == 0){
                 listaHostsArriba.add(host);
+                System.out.println("Host arriba " + host);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

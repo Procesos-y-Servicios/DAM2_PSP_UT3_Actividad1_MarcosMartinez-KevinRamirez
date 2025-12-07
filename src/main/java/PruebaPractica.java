@@ -1,9 +1,14 @@
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class PruebaPractica {
 
-    private static ArrayList<String> listaHostsArriba = new ArrayList<>();
+    private static List<String> listaHostsArriba =
+            Collections.synchronizedList(new ArrayList<>());
 
     public static void main(String[] args) {
 
@@ -21,26 +26,43 @@ public class PruebaPractica {
 
         try {
             for (int i = 0; i < listaHilos.length; i++) {
-                listaHilos[i] = new EjecutorPing(ip+i, listaHostsArriba);
+                String ipUsable = ip+i;
+                listaHilos[i] = new EjecutorPing(ipUsable, listaHostsArriba);
                 listaHilos[i].start();
             }
 
             for (Thread t: listaHilos) {
                 t.join();
             }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        System.out.println(listaHostsArriba);
 
         ejecutarHiloHostsArriba();
 
     }
 
     public static void ejecutarHiloHostsArriba() {
-        for(int i=0; i< listaHostsArriba.toArray().length; i++) {
-            HilosIP hilo = new HilosIP(listaHostsArriba.get(i));
+        try {
+            String[] ips = listaHostsArriba.toArray(new String[0]);
+            HilosIP[] hilosIPS = new HilosIP[listaHostsArriba.size()];
+            for(int i=0; i < ips.length; i++) {
+                hilosIPS[i] = new HilosIP(ips[i]);
+                hilosIPS[i].start();
+            }
+
+            for (int i = 0; i < hilosIPS.length; i++) {
+                hilosIPS[i].join();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
+
+
 
     public static boolean validarSubred(String ip) {
 
