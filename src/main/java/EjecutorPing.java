@@ -4,17 +4,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Esta clase se encarga de ejecutar el ping a las ips que se le pasan como parametros y almacenarlas en {@code listaHostsArriba}
+ *
+ */
 public class EjecutorPing extends Thread{
 
     private String host;
 
     private List<String> listaHostsArriba;
 
+    /**
+     * Este metod es el constructor que asigna el valor de los parametros pasados desde {@link PruebaPractica}
+     * @param host Ip pasada por la clase antes mencionada
+     * @param lista Lista de hosts abiertos
+     */
     public EjecutorPing(String host, List<String> lista) {
         this.host = host;
         this.listaHostsArriba = lista;
     }
 
+    /**
+     * Metodo que ejecuta el hilo
+     * Lanza un proceso de manera paralela que se encarga de hacer un ping y que distingue el tipo de sistema operativo
+     * Lee el valor de salida y dependiendo de este ultimo, lo añade o no a {@code listaHostsArriba}
+     */
     @Override
     public void run() {
         ProcessBuilder pb;
@@ -29,7 +43,6 @@ public class EjecutorPing extends Thread{
             process.waitFor();
             if (process.exitValue() == 0){
                 listaHostsArriba.add(host);
-                System.out.println("Host arriba " + host);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,12 +50,4 @@ public class EjecutorPing extends Thread{
             throw new RuntimeException(e);
         }
     }
-
-
-//    public static ArrayList<String> addHostArriba() {
-//        listaHostsArriba.add(host);
-//        return listaHostsArriba;
-//    }
-
-
 }
