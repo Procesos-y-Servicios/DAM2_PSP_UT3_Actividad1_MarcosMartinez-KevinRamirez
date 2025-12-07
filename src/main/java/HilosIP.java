@@ -69,13 +69,12 @@ public class HilosIP extends Thread {
             }
         }
 
-        if (!puertosAbiertos){
-            sb.append("\tNo tiene puertos abiertos\n");
+        if (puertosAbiertos){
+            synchronized (System.out) {
+                System.out.print(sb.toString());
+            }
+        } else {
+            sb = null;
         }
-
-        synchronized (System.out) {
-            System.out.print(sb.toString());
-        }
-
     }
 }
